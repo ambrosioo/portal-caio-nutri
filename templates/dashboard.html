@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard do Nutricionista</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-200">
+    <div class="container mx-auto p-8">
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="text-4xl font-bold text-blue-400">Dashboard do Nutricionista</h1>
+            <a href="{{ url_for('logout') }}" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">Sair</a>
+        </header>
+
+        <div class="mb-6 flex space-x-4">
+            <a href="{{ url_for('create_patient') }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+                + Criar Novo Paciente
+            </a>
+            <a href="{{ url_for('archived_patients') }}" class="inline-block bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">
+                Ver Arquivados
+            </a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="p-4 mb-4 text-sm rounded-lg {{ 'bg-green-800 text-green-200' if category == 'success' else 'bg-red-800 text-red-200' }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl shadow-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-100">Lista de Pacientes Ativos</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-400">
+                    <thead class="text-xs text-gray-300 uppercase bg-gray-700">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Usuário do Paciente</th>
+                            <th scope="col" class="px-6 py-3">Senha</th>
+                            <th scope="col" class="px-6 py-3">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for patient in patients %}
+                        <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-600">
+                            <th scope="row" class="px-6 py-4 font-medium text-white whitespace-nowrap">
+                                {{ patient.username }}
+                            </th>
+                            <td class="px-6 py-4">
+                                {{ patient.password }}
+                            </td>
+                            <td class="px-6 py-4 flex space-x-4">
+                                <a href="{{ url_for('edit_plan', username=patient.username) }}" class="font-medium text-blue-500 hover:underline">Editar Plano</a>
+                                <a href="{{ url_for('archive_patient', username=patient.username) }}" class="font-medium text-yellow-500 hover:underline">Arquivar</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacientes Arquivados</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-200">
+    <div class="container mx-auto p-8">
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="text-4xl font-bold text-blue-400">Pacientes Arquivados</h1>
+            <a href="{{ url_for('dashboard') }}" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">Voltar ao Dashboard</a>
+        </header>
+
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl shadow-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-100">Lista de Pacientes Arquivados</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-400">
+                    <thead class="text-xs text-gray-300 uppercase bg-gray-700">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Usuário do Paciente</th>
+                            <th scope="col" class="px-6 py-3">Senha</th>
+                            <th scope="col" class="px-6 py-3">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for patient in patients %}
+                        <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-600">
+                            <th scope="row" class="px-6 py-4 font-medium text-white whitespace-nowrap">
+                                {{ patient.username }}
+                            </th>
+                            <td class="px-6 py-4">
+                                {{ patient.password }}
+                            </td>
+                            <td class="px-6 py-4">
+                                <a href="{{ url_for('restore_patient', username=patient.username) }}" class="font-medium text-green-500 hover:underline">Restaurar</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

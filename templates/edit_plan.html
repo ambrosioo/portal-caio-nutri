@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Plano - {{ patient.name or username }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-200">
+    <div class="container mx-auto p-8">
+        <form method="POST" action="{{ url_for('save_plan', username=username) }}">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-4xl font-bold text-blue-400">Plano Nutricional</h1>
+                    <p class="text-2xl font-light text-gray-400">Paciente: {{ patient.name or username }}</p>
+                </div>
+                <div>
+                    <a href="{{ url_for('dashboard') }}" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg mr-2">Voltar ao Dashboard</a>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Salvar Plano</button>
+                </div>
+            </div>
+
+            <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 mb-8">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-100">1. Informações Gerais</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="name" class="block mb-2 text-sm font-medium">Nome Completo</label>
+                        <input type="text" name="name" value="{{ patient.name or '' }}" class="bg-gray-700 border border-gray-600 text-white rounded-lg w-full p-2.5">
+                    </div>
+                    <div>
+                        <label for="details" class="block mb-2 text-sm font-medium">Detalhes (Ex: Atleta de Tênis)</label>
+                        <input type="text" name="details" value="{{ patient.details or '' }}" class="bg-gray-700 border border-gray-600 text-white rounded-lg w-full p-2.5">
+                    </div>
+                    <div>
+                        <label for="consultation_date" class="block mb-2 text-sm font-medium">Data da Consulta</label>
+                        <input type="text" name="consultation_date" value="{{ patient.consultation_date or '' }}" class="bg-gray-700 border border-gray-600 text-white rounded-lg w-full p-2.5">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 mb-8">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-100">2. Análise de Bioimpedância</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div><label class="block mb-2 text-sm">Gordura (%)</label><input type="text" name="fat_percentage" value="{{ patient.bioimpedance.fat_percentage or '' }}" class="bg-gray-700 rounded-lg w-full p-2.5"></div>
+                    <div><label class="block mb-2 text-sm">Músculo (kg)</label><input type="text" name="muscle_mass" value="{{ patient.bioimpedance.muscle_mass or '' }}" class="bg-gray-700 rounded-lg w-full p-2.5"></div>
+                    <div><label class="block mb-2 text-sm">Água (%)</label><input type="text" name="water_percentage" value="{{ patient.bioimpedance.water_percentage or '' }}" class="bg-gray-700 rounded-lg w-full p-2.5"></div>
+                    <div><label class="block mb-2 text-sm">Metabolismo Basal</label><input type="text" name="basal_metabolism" value="{{ patient.bioimpedance.basal_metabolism or '' }}" class="bg-gray-700 rounded-lg w-full p-2.5"></div>
+                </div>
+                 <div class="mt-4">
+                    <label class="block mb-2 text-sm">Link da Análise Detalhada (Opcional)</label>
+                    <input type="url" name="bioimpedance_url" value="{{ patient.bioimpedance.url or '' }}" class="bg-gray-700 rounded-lg w-full p-2.5">
+                </div>
+            </div>
+
+            <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 mb-8">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-100">3. Análises e Planos</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block mb-2 text-sm">Plano Alimentar (Texto Resumo)</label>
+                        <textarea name="food_plan_text" rows="4" class="bg-gray-700 rounded-lg w-full p-2.5">{{ patient.habits.food_plan_text or '' }}</textarea>
+                         <label class="block mt-4 mb-2 text-sm">Link do Plano Alimentar Completo (PDF/Drive)</label>
+                        <input type="url" name="food_plan_url" value="{{ patient.habits.url or '' }}" class="bg-gray-700 rounded-lg w-full p-2.5">
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm">Identificação de Erros</label>
+                        <textarea name="errors" rows="2" class="bg-gray-700 rounded-lg w-full p-2.5">{{ patient.habits.errors or '' }}</textarea>
+                        <label class="block mt-4 mb-2 text-sm">Pontos de Melhoria</label>
+                        <textarea name="improvements" rows="2" class="bg-gray-700 rounded-lg w-full p-2.5">{{ patient.habits.improvements or '' }}</textarea>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm">Análise de Sinais Corporais (um por linha)</label>
+                        <textarea name="signals" rows="4" class="bg-gray-700 rounded-lg w-full p-2.5">{{ patient.signals | join('\n') if patient.signals }}</textarea>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm">Plano de Suplementação (um por linha)</label>
+                        <textarea name="supplements" rows="4" class="bg-gray-700 rounded-lg w-full p-2.5">{{ patient.plan.supplements | join('\n') if patient.plan and patient.plan.supplements }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+             <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 mb-8">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-100">4. Check-list de Progresso (Metas)</h2>
+                {% for i in range(3) %}
+                <div class="flex items-center gap-4 mb-2">
+                    <label class="w-20">Meta {{i+1}}:</label>
+                    <input type="text" name="goal_text_{{i}}" value="{{ patient.goals[i].text if patient.goals and patient.goals[i] else '' }}" class="bg-gray-700 rounded-lg flex-grow p-2.5">
+                    <input type="checkbox" name="goal_completed_{{i}}" class="w-4 h-4 text-blue-600 bg-gray-700 rounded" {% if patient.goals and patient.goals[i] and patient.goals[i].completed %}checked{% endif %}>
+                    <label>Concluída</label>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 mb-8">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-100">5. Resultados e Evolução</h2>
+                <div>
+                    <label class="block mb-2 text-sm">Previsão de Resultados (Texto)</label>
+                    <textarea name="prediction_text" rows="3" class="bg-gray-700 rounded-lg w-full p-2.5">{{ patient.results.prediction_text or '' }}</textarea>
+                </div>
+                <h3 class="text-xl font-semibold mt-6 mb-4 text-gray-100">Dados de Evolução Mensal</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-400">
+                        <thead class="text-xs uppercase bg-gray-700">
+                            <tr>
+                                <th class="px-2 py-2">Mês</th>
+                                <th class="px-2 py-2">Gordura (%)</th>
+                                <th class="px-2 py-2">Músculo (kg)</th>
+                                <th class="px-2 py-2">Água (%)</th>
+                                <th class="px-2 py-2">Metabolismo (kcal)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in range(1, 13) %}
+                            {% set month_data = patient.evolution | selectattr('month', 'equalto', i) | first %}
+                            <tr class="bg-gray-800 border-b border-gray-700">
+                                <td class="px-2 py-2 font-bold">{{i}}</td>
+                                <td><input type="text" name="evo_fat_{{i}}" value="{{ month_data.fat or '' }}" class="bg-gray-600 rounded w-full p-1.5"></td>
+                                <td><input type="text" name="evo_muscle_{{i}}" value="{{ month_data.muscle or '' }}" class="bg-gray-600 rounded w-full p-1.5"></td>
+                                <td><input type="text" name="evo_water_{{i}}" value="{{ month_data.water or '' }}" class="bg-gray-600 rounded w-full p-1.5"></td>
+                                <td><input type="text" name="evo_metabolism_{{i}}" value="{{ month_data.metabolism or '' }}" class="bg-gray-600 rounded w-full p-1.5"></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</body>
+</html>
